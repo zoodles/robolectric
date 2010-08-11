@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(DroidSugarAndroidTestRunner.class)
 public class ProxyDelegatingHandlerTest {
@@ -17,13 +18,13 @@ public class ProxyDelegatingHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-        context = new MockContext();
     }
 
     @Test
     public void testConstructorInvocation_WithDefaultConstructorAndNoConstructorDelegateOnProxyClass() throws Exception {
         DroidSugarAndroidTestRunner.addProxy(View.class, TestFakeView_WithDefaultConstructorAndNoConstructorDelegate.class);
 
+        context = new MockContext();
         View view = new View(context);
         assertEquals(TestFakeView_WithDefaultConstructorAndNoConstructorDelegate.class, DroidSugarAndroidTestRunner.proxyFor(view).getClass());
     }
@@ -32,6 +33,7 @@ public class ProxyDelegatingHandlerTest {
     public void testConstructorInvocation() throws Exception {
         DroidSugarAndroidTestRunner.addProxy(View.class, TestFakeView.class);
 
+        context = new MockContext();
         View view = new View(context);
         assertSame(context, proxyFor(view).context);
         assertSame(view, proxyFor(view).realView);
@@ -41,6 +43,7 @@ public class ProxyDelegatingHandlerTest {
     public void testMethodDelegation() throws Exception {
         DroidSugarAndroidTestRunner.addProxy(View.class, TestFakeView.class);
 
+        context = new MockContext();
         View view = new View(context);
         assertSame(context, view.getContext());
     }
@@ -49,6 +52,7 @@ public class ProxyDelegatingHandlerTest {
     public void testProxySelectionSearchesSuperclasses() throws Exception {
         DroidSugarAndroidTestRunner.addProxy(View.class, TestFakeView.class);
 
+        context = new MockContext();
         TextView textView = new TextView(context);
         assertEquals(TestFakeView.class, DroidSugarAndroidTestRunner.proxyFor(textView).getClass());
     }
@@ -58,6 +62,7 @@ public class ProxyDelegatingHandlerTest {
         DroidSugarAndroidTestRunner.addProxy(View.class, TestFakeView.class);
         DroidSugarAndroidTestRunner.addProxy(TextView.class, TestFakeTextView.class);
 
+        context = new MockContext();
         TextView textView = new TextView(context);
         TestFakeTextView textViewProxy = proxyFor(textView);
         System.out.println("textViewProxy = " + textViewProxy);

@@ -21,7 +21,7 @@ public class ProxyDelegatingHandler implements ClassHandler {
 
     private Map<String, String> classHandlers = new HashMap<String, String>();
     private Map<Class, Field> proxyFieldMap = new HashMap<Class, Field>();
-    public boolean debug = false;
+    public boolean debug = true;
 
     // sorry! it really only makes sense to have one per ClassLoader anyway though [xw/hu]
     public static ProxyDelegatingHandler getInstance() {
@@ -129,6 +129,7 @@ public class ProxyDelegatingHandler implements ClassHandler {
             throw new RuntimeException("method staticness of " + clazz.getName() + "." + methodName + " and " + handlingClassName + "." + method.getName() + " don't match");
         }
 
+        System.out.println("Invoking fake method " + method + " on " + fakeObject);
         try {
             return method.invoke(fakeObject, params);
         } catch (IllegalArgumentException e) {

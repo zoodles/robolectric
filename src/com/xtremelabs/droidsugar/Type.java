@@ -2,7 +2,7 @@ package com.xtremelabs.droidsugar;
 
 import javassist.CtClass;
 
-enum Type {
+public enum Type {
     VOID(null, null, "", "", Void.TYPE),
     BOOLEAN(false, "false", ".booleanValue()", "java.lang.Boolean", Boolean.TYPE),
     BYTE(0, "0", ".byteValue()", "java.lang.Byte", Byte.TYPE),
@@ -32,19 +32,19 @@ enum Type {
         return defaultReturnValue;
     }
 
-    String defaultReturnString() {
+    public String defaultReturnString() {
         return defaultReturnString;
     }
 
-    String unboxString() {
+    public String unboxString() {
         return unboxString;
     }
 
-    String nonPrimitiveClassName(CtClass returnCtClass) {
+    public String nonPrimitiveClassName(CtClass returnCtClass) {
         return nonPrimitiveClassName == null ? returnCtClass.getName() : nonPrimitiveClassName;
     }
 
-    boolean isVoid() {
+    public boolean isVoid() {
         return this == VOID;
     }
 

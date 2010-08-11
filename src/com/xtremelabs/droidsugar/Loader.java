@@ -9,13 +9,13 @@ public class Loader extends javassist.Loader {
     public Loader(ClassHandler classHandler) {
         super(Loader.class.getClassLoader(), null);
 
-        delegateLoadingOf(AndroidTranslator.class.getName());
+        delegateLoadingOf(NativeStrippingTranslator.class.getName());
 
         try {
             ClassPool classPool = new ClassPool();
             classPool.appendClassPath(new LoaderClassPath(Loader.class.getClassLoader()));
 
-            addTranslator(classPool, new AndroidTranslator(classHandler));
+            addTranslator(classPool, new NativeStrippingTranslator(classHandler));
         } catch (NotFoundException e) {
             throw new RuntimeException(e);
         } catch (CannotCompileException e) {

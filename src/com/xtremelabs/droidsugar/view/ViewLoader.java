@@ -2,7 +2,9 @@ package com.xtremelabs.droidsugar.view;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -10,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.content.Context;
 import android.view.View;
@@ -18,6 +22,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class ViewLoader {
     public static final String ANDROID_NS = "http://schemas.android.com/apk/res/android";
@@ -26,26 +31,25 @@ public class ViewLoader {
     private Map<String, ViewNode> viewNodesByLayoutName = new HashMap<String, ViewNode>();
     private Map<String, Integer> resourceStringToId = new HashMap<String, Integer>();
     private Map<Integer, String> resourceIdToString = new HashMap<Integer, String>();
+    private static final Pattern ID_PATTERN = Pattern.compile("^@(\\+id|android:id)/(.*)$");
 
-    public ViewLoader(Class rClass, File... layoutDirs) throws Exception {
+    public ViewLoader() {
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);
         documentBuilderFactory.setIgnoringComments(true);
         documentBuilderFactory.setIgnoringElementContentWhitespace(true);
+    }
 
+    public ViewLoader(Class rClass, File... layoutDirs) throws Exception {
+        this();
+        
         addRClass(rClass);
         for (File layoutDir : layoutDirs) {
             addXmlDir(layoutDir);
         }
     }
 
-    private void addXmlDir(File layoutDir) throws Exception {
-        for (File file1 : layoutDir.listFiles()) {
-            processXml(file1);
-        }
-    }
-
-    private void addRClass(Class rClass) throws Exception {
+    public void addRClass(Class rClass) throws Exception {
         for (Class innerClass : rClass.getClasses()) {
             for (Field field : innerClass.getDeclaredFields()) {
                 if (field.getType().equals(Integer.TYPE) && Modifier.isStatic(field.getModifiers())) {
@@ -55,6 +59,12 @@ public class ViewLoader {
                     resourceIdToString.put(value, name);
                 }
             }
+        }
+    }
+
+    public void addXmlDir(File layoutDir) throws Exception {
+        for (File file1 : layoutDir.listFiles()) {
+            processXml(file1);
         }
     }
 
@@ -92,14 +102,17 @@ public class ViewLoader {
             if (parent != null) parent.addChild(viewNode);
 
             String idAttr = getIdAttr(node);
-            if (idAttr != null && idAttr.startsWith("@+id/")) {
-                idAttr = idAttr.substring(5);
+            if (idAttr != null) {
+                Matcher matcher = ID_PATTERN.matcher(idAttr);
+                if (matcher.matches()) {
+                    idAttr = matcher.group(2);
 
-                Integer id = resourceStringToId.get("id/" + idAttr);
-                if (id == null) {
-                    throw new RuntimeException("unknown id " + getIdAttr(node));
+                    Integer id = resourceStringToId.get("id/" + idAttr);
+                    if (id == null) {
+                        throw new RuntimeException("unknown id " + getIdAttr(node));
+                    }
+                    viewNode.setId(id);
                 }
-                viewNode.setId(id);
             }
 
             processChildren(node.getChildNodes(), viewNode);
@@ -125,12 +138,22 @@ public class ViewLoader {
     }
 
     public View inflateView(Context context, int resourceId) {
-        return inflateView(context, resourceIdToString.get(resourceId));
+        return inflateView(context, getNameById(resourceId));
     }
 
-    private Document parse(File xmlFile) throws Exception {
+    public String getNameById(int resourceId) {
+        return resourceIdToString.get(resourceId);
+    }
+
+    private Document parse(File xmlFile) throws ParserConfigurationException {
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        return documentBuilder.parse(xmlFile);
+        try {
+            return documentBuilder.parse(xmlFile);
+        } catch (SAXException e) {
+            throw new RuntimeException("Error parsing " + xmlFile, e);
+        } catch (IOException e) {
+            throw new RuntimeException("Error parsing " + xmlFile, e);
+        }
     }
 
     private class ViewNode {
@@ -155,7 +178,7 @@ public class ViewLoader {
 
         public View inflate(Context context) throws Exception {
             View view = create(context);
-            if (id != null && view.getId() == 0) {
+            if (id != null && view.getId() <= 0) {
                 view.setId(id);
             }
             for (ViewNode child : children) {

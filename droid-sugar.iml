@@ -38,13 +38,14 @@
     <orderEntry type="module-library">
       <library name="XmlPullParser">
         <CLASSES>
-          <root url="jar:///Users/pivotal/Downloads/xpp3-1.1.4c.jar/xpp3-1.1.4c.jar!/" />
+          <root url="jar://$USER_HOME$/Downloads/xpp3-1.1.4c.jar/xpp3-1.1.4c.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
     <orderEntry type="library" name="Android 2.1 Real Libs" level="project" />
+    <orderEntry type="library" name="Android 2.2 Google APIs" level="application" />
   </component>
 </module>
 

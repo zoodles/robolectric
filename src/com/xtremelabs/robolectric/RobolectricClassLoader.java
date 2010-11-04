@@ -1,5 +1,7 @@
 package com.xtremelabs.robolectric;
 
+import com.xtremelabs.robolectric.util.RealObject;
+import com.xtremelabs.robolectric.util.TestHelperInterface;
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.LoaderClassPath;
@@ -47,10 +49,12 @@ public class RobolectricClassLoader extends javassist.Loader {
                             || name.startsWith("org.hamcrest")
                             || name.equals(AndroidTranslator.class.getName())
                             || name.equals(ClassHandler.class.getName())
+                            || name.equals(RealObject.class.getName())
                             || name.equals(ShadowWrangler.class.getName())
+                            || name.equals(TestHelperInterface.class.getName())
             );
 
-            System.out.println(name + " should come from class loader? " + shouldComeFromThisClassLoader);
+//            System.out.println(name + " should come from class loader? " + shouldComeFromThisClassLoader);
 
             Class<?> theClass;
             if (shouldComeFromThisClassLoader) {
@@ -59,11 +63,11 @@ public class RobolectricClassLoader extends javassist.Loader {
                 theClass = RobolectricClassLoader.class.getClassLoader().loadClass(name);
             }
 
-            try {
-                if (name.contains("Activity"))
-                    System.out.println("method: " + theClass.getDeclaredMethod("onPause"));
-            } catch (NoSuchMethodException e) {
-            }
+//            try {
+//                if (name.contains("Activity"))
+//                    System.out.println("method: " + theClass.getDeclaredMethod("onPause"));
+//            } catch (NoSuchMethodException e) {
+//            }
 
             return theClass;
         } else {

@@ -73,6 +73,8 @@ public class AndroidTranslator implements Translator {
             fixConstructors(ctClass);
             fixMethods(ctClass);
 
+            ctClass.makeClassInitializer().setBody("{}");
+
             try {
                 classCache.addClass(className, ctClass.toBytecode());
             } catch (IOException e) {

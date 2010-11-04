@@ -27,7 +27,9 @@
         <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/main/javassist-3.12.GA.jar!/" />
         </CLASSES>
-        <JAVADOC />
+        <JAVADOC>
+          <root url="http://www.csg.is.titech.ac.jp/~chiba/javassist/html/" />
+        </JAVADOC>
         <SOURCES />
       </library>
     </orderEntry>

@@ -8,9 +8,13 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 public class AbstractRobolectricTestRunner extends BlockJUnit4ClassRunner {
     private static RobolectricClassLoader defaultLoader;
+    static final boolean USE_REAL_ANDROID_SOURCES = false;
 
     private RobolectricClassLoader loader;
     private ClassHandler classHandler;
@@ -19,9 +23,25 @@ public class AbstractRobolectricTestRunner extends BlockJUnit4ClassRunner {
 
     private static RobolectricClassLoader getDefaultLoader() {
         if (defaultLoader == null) {
-            defaultLoader = new RobolectricClassLoader(ShadowWrangler.getInstance());
+            if (USE_REAL_ANDROID_SOURCES) {
+                URLClassLoader classLoader = new URLClassLoader(new URL[]{
+                        parseUrl("file:///Volumes/AndroidSource/out/host/common/obj/JAVA_LIBRARIES/layoutlib_intermediates/javalib.jar"),
+                        parseUrl("file:///Volumes/AndroidSource/out/host/common/obj/JAVA_LIBRARIES/layoutlib_api_intermediates/javalib.jar")
+                }, null);
+                defaultLoader = new RobolectricClassLoader(classLoader, ShadowWrangler.getInstance());
+            } else {
+                defaultLoader = new RobolectricClassLoader(ShadowWrangler.getInstance());
+            }
         }
         return defaultLoader;
+    }
+
+    private static URL parseUrl(String url) {
+        try {
+            return new URL(url);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public AbstractRobolectricTestRunner(Class<?> testClass) throws InitializationError {

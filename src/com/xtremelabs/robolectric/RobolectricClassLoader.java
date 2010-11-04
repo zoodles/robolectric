@@ -9,15 +9,26 @@ public class RobolectricClassLoader extends javassist.Loader {
     private ClassCache classCache;
 
     public RobolectricClassLoader(ClassHandler classHandler) {
-        super(RobolectricClassLoader.class.getClassLoader(), null);
+        this(RobolectricClassLoader.class.getClassLoader(), classHandler);
+    }
+
+    public RobolectricClassLoader(ClassLoader classLoader, ClassHandler classHandler) {
+        super(classLoader, null);
 
         delegateLoadingOf(AndroidTranslator.class.getName());
         delegateLoadingOf(ClassHandler.class.getName());
 
-        classCache = new ClassCache("tmp/cached-robolectric-classes.jar", AndroidTranslator.CACHE_VERSION);
+        classCache = new ClassCache(
+                AbstractRobolectricTestRunner.USE_REAL_ANDROID_SOURCES
+                        ? "tmp/cached-robolectrified-REAL-ANDROID-classes.jar"
+                        : "tmp/cached-robolectric-classes.jar", AndroidTranslator.CACHE_VERSION);
         try {
             ClassPool classPool = new ClassPool();
-            classPool.appendClassPath(new LoaderClassPath(RobolectricClassLoader.class.getClassLoader()));
+            classPool.appendClassPath(new LoaderClassPath(classLoader));
+
+            if (classLoader != RobolectricClassLoader.class.getClassLoader()) {
+                classPool.appendClassPath(new LoaderClassPath(RobolectricClassLoader.class.getClassLoader()));
+            }
 
             AndroidTranslator androidTranslator = new AndroidTranslator(classHandler, classCache);
             addTranslator(classPool, androidTranslator);
@@ -30,6 +41,37 @@ public class RobolectricClassLoader extends javassist.Loader {
 
     @Override
     public Class loadClass(String name) throws ClassNotFoundException {
+        if (AbstractRobolectricTestRunner.USE_REAL_ANDROID_SOURCES) {
+            boolean shouldComeFromThisClassLoader = !(
+                    name.startsWith("org.junit")
+                            || name.startsWith("org.hamcrest")
+                            || name.equals(AndroidTranslator.class.getName())
+                            || name.equals(ClassHandler.class.getName())
+                            || name.equals(ShadowWrangler.class.getName())
+            );
+
+            System.out.println(name + " should come from class loader? " + shouldComeFromThisClassLoader);
+
+            Class<?> theClass;
+            if (shouldComeFromThisClassLoader) {
+                theClass = super.loadClass(name);
+            } else {
+                theClass = RobolectricClassLoader.class.getClassLoader().loadClass(name);
+            }
+
+            try {
+                if (name.contains("Activity"))
+                    System.out.println("method: " + theClass.getDeclaredMethod("onPause"));
+            } catch (NoSuchMethodException e) {
+            }
+
+            return theClass;
+        } else {
+            return loadClassOld(name);
+        }
+    }
+
+    private Class loadClassOld(String name) throws ClassNotFoundException {
         boolean shouldComeFromThisClassLoader = !(name.startsWith("org.junit") || name.startsWith("org.hamcrest"));
 
         Class<?> theClass;
@@ -48,7 +90,7 @@ public class RobolectricClassLoader extends javassist.Loader {
         try {
             return loadClass(testClassName);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Can't load " + testClassName, e);
         }
     }
 

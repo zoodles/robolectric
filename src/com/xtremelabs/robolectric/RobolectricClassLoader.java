@@ -52,6 +52,7 @@ public class RobolectricClassLoader extends javassist.Loader {
                             || name.equals(RealObject.class.getName())
                             || name.equals(ShadowWrangler.class.getName())
                             || name.equals(TestHelperInterface.class.getName())
+                            || name.equals(Vars.class.getName())
             );
 
 //            System.out.println(name + " should come from class loader? " + shouldComeFromThisClassLoader);

@@ -62,6 +62,7 @@ public class AbstractRobolectricTestRunner extends BlockJUnit4ClassRunner {
         this.loader.delegateLoadingOf(TestHelperInterface.class.getName());
         this.loader.delegateLoadingOf(RealObject.class.getName());
         this.loader.delegateLoadingOf(ShadowWrangler.class.getName());
+        this.loader.delegateLoadingOf(Vars.class.getName());
     }
 
     public void delegateLoadingOf(String className) {

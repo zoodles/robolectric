@@ -65,9 +65,16 @@ public class ShadowWrangler implements ClassHandler {
     @Override
     public Object methodInvoked(Class clazz, String methodName, Object instance, String[] paramTypes, Object[] params) {
         InvocationPlan invocationPlan = new InvocationPlan(clazz, methodName, instance, paramTypes);
-        if (!invocationPlan.prepare()) return null;
 
         try {
+            if (!invocationPlan.prepare()) {
+                if (AbstractRobolectricTestRunner.USE_REAL_ANDROID_SOURCES) {
+                    return delegateBackToReal(invocationPlan, params);
+                } else {
+                    return null;
+                }
+            }
+
             return invocationPlan.getMethod().invoke(invocationPlan.getShadow(), params);
         } catch (IllegalArgumentException e) {
             throw new RuntimeException(invocationPlan.getShadow().getClass().getName() + " is not assignable from " + invocationPlan.getHandlingClass().getName(), e);
@@ -78,6 +85,21 @@ public class ShadowWrangler implements ClassHandler {
                 throw new RuntimeException("Did your shadow implementation of a method throw an exception? Refer to the bottom of this stack trace.", e);
             }
         } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Object delegateBackToReal(InvocationPlan invocationPlan, Object[] params) throws InvocationTargetException, IllegalAccessException {
+        if (invocationPlan.methodName.startsWith("<") || invocationPlan.methodName.equals("__constructor__")) {
+            return null;
+        }
+
+        try {
+            Method method = invocationPlan.clazz.getDeclaredMethod(invocationPlan.methodName, invocationPlan.paramClasses);
+            method.setAccessible(true);
+            Robolectric.directlyOn(invocationPlan.instance == null ? invocationPlan.clazz : invocationPlan.instance);
+            return method.invoke(invocationPlan.instance, params);
+        } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
@@ -226,6 +248,7 @@ public class ShadowWrangler implements ClassHandler {
         private String methodName;
         private Object instance;
         private String[] paramTypes;
+        private Class<?>[] paramClasses;
         private Class<?> handlingClass;
         private Method method;
         private Object shadow;
@@ -250,7 +273,7 @@ public class ShadowWrangler implements ClassHandler {
         }
 
         public boolean prepare() {
-            Class<?>[] paramClasses = new Class<?>[paramTypes.length];
+            paramClasses = new Class<?>[paramTypes.length];
 
             ClassLoader classLoader = clazz.getClassLoader();
             for (int i = 0; i < paramTypes.length; i++) {

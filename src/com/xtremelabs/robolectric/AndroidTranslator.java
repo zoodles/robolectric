@@ -1,6 +1,8 @@
 package com.xtremelabs.robolectric;
 
 import javassist.*;
+import javassist.expr.ExprEditor;
+import javassist.expr.MethodCall;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,6 +17,12 @@ public class AndroidTranslator implements Translator {
     public static final int CACHE_VERSION = 7;
 
     private static final List<ClassHandler> CLASS_HANDLERS = new ArrayList<ClassHandler>();
+
+    public static final ThreadLocal<Vars> ALL_VARS = new ThreadLocal<Vars>() {
+        @Override protected Vars initialValue() {
+            return new Vars();
+        }
+    };
 
     private ClassHandler classHandler;
     private ClassCache classCache;
@@ -43,7 +51,7 @@ public class AndroidTranslator implements Translator {
         CtClass robolectricInternalsCtClass = classPool.get(RobolectricInternals.class.getName());
         robolectricInternalsCtClass.setModifiers(Modifier.PUBLIC);
 
-        robolectricInternalsCtClass.getClassInitializer().insertBefore("{\n" +
+        robolectricInternalsCtClass.makeClassInitializer().insertBefore("{\n" +
                 "classHandler = " + AndroidTranslator.class.getName() + ".getClassHandler(" + index + ");\n" +
                 "}");
     }
@@ -53,7 +61,7 @@ public class AndroidTranslator implements Translator {
         if (classCache.isWriting()) {
             throw new IllegalStateException("shouldn't be modifying bytecode after we've started writing cache! class=" + className);
         }
-        
+
         boolean needsStripping =
                 className.startsWith("android.")
                         || className.startsWith("org.apache.http")
@@ -112,16 +120,19 @@ public class AndroidTranslator implements Translator {
             }
         }
 
+        System.out.println(ctClass.getName() + " hasDefault = " + hasDefault);
+
         if (!hasDefault) {
             String methodBody = generateConstructorBody(ctClass, new CtClass[0]);
             ctClass.addConstructor(CtNewConstructor.make(new CtClass[0], new CtClass[0], "{\n" + methodBody + "}\n", ctClass));
         }
     }
 
-    private boolean fixConstructor(CtClass ctClass, boolean needsDefault, CtConstructor ctConstructor) throws NotFoundException, CannotCompileException {
+    private void fixConstructor(CtClass ctClass, boolean needsDefault, CtConstructor ctConstructor) throws NotFoundException, CannotCompileException {
+        if (AbstractRobolectricTestRunner.USE_REAL_ANDROID_SOURCES) return;
+
         String methodBody = generateConstructorBody(ctClass, ctConstructor.getParameterTypes());
         ctConstructor.setBody("{\n" + methodBody + "}\n");
-        return needsDefault;
     }
 
     private String generateConstructorBody(CtClass ctClass, CtClass[] parameterTypes) throws NotFoundException {
@@ -147,7 +158,30 @@ public class AndroidTranslator implements Translator {
         return Modifier.toString(ctMethod.getModifiers()) + " " + ctMethod.getReturnType().getSimpleName() + " " + ctMethod.getLongName();
     }
 
-    private void fixMethod(CtClass ctClass, CtMethod ctMethod) throws NotFoundException, CannotCompileException {
+    private void fixMethod(CtClass ctClass, final CtMethod ctMethod) throws NotFoundException, CannotCompileException {
+        ctMethod.instrument(new ExprEditor() {
+            @Override public void edit(MethodCall m) throws CannotCompileException {
+                if (m.isSuper() && m.getMethodName().equals(ctMethod.getName())) {
+                    StringBuilder buf = new StringBuilder();
+                    try {
+                        for (int i = 0; i < ctMethod.getParameterTypes().length; i++) {
+                            if (buf.length() > 0) {
+                                buf.append(", ");
+                            }
+                            buf.append("$");
+                            buf.append(i + 1);
+                        }
+
+                        boolean returnsVoid = ctMethod.getReturnType().equals(CtClass.voidType);
+                        m.replace(RobolectricInternals.class.getName() + ".directlyOn($0);\n" +
+                                (returnsVoid ? "" : "$_ = ") + "super." + m.getMethodName() + "(" + buf.toString() + ");");
+                    } catch (NotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                super.edit(m);
+            }
+        });
         int originalModifiers = ctMethod.getModifiers();
         int newModifiers = originalModifiers;
 

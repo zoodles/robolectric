@@ -283,6 +283,13 @@ public class ShadowApplication extends ShadowContextWrapper {
     }
 
     /**
+     * 
+     * @return
+     */
+    public List<Intent> getAllStartedActivities() {
+    	return startedActivities;
+    }
+    /**
      * Clears all {@code Intent} started by {@link #startService(android.content.Intent)}
      */
     @Override

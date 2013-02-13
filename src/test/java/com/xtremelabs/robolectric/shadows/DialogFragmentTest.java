@@ -121,6 +121,13 @@ public class DialogFragmentTest {
         assertTrue(shadowOf(dialog).hasBeenDismissed());
     }
     
+    @Test
+    public void setCancelable() {
+    	assertTrue(dialogFragment.isCancelable());
+        dialogFragment.setCancelable(false);
+       	assertFalse(dialogFragment.isCancelable());
+    }
+    
     private class TestDialogFragment extends DialogFragment {
         final Transcript transcript = new Transcript();
         Activity onAttachActivity;

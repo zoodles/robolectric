@@ -22,6 +22,7 @@ public class ShadowDialogFragment extends ShadowFragment {
 
     private Dialog dialog;
     private TestFragmentManager testFragmentManager;
+    private boolean cancelable = true;
 
     @RealObject
     private DialogFragment realDialogFragment;
@@ -80,6 +81,19 @@ public class ShadowDialogFragment extends ShadowFragment {
     @Implementation
     public Dialog getDialog() {
         return dialog;
+    }
+    
+    @Implementation
+    public void setCancelable(boolean cancelable) {
+    	this.cancelable = cancelable;
+    	if (dialog != null) {
+    		dialog.setCancelable(cancelable);
+    	}
+    }
+    
+    @Implementation
+    public boolean isCancelable() {
+    	return cancelable;
     }
     
     // The following API is not supported by Android Support Library V4 r6(r7). Need to add anotation back

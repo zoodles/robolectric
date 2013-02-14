@@ -289,6 +289,7 @@ public class ShadowApplication extends ShadowContextWrapper {
     public List<Intent> getAllStartedActivities() {
     	return startedActivities;
     }
+    
     /**
      * Clears all {@code Intent} started by {@link #startService(android.content.Intent)}
      */
@@ -297,6 +298,10 @@ public class ShadowApplication extends ShadowContextWrapper {
         startedServices.clear();
     }
 
+    public List<Intent> getAllStartedServices() {
+    	return startedServices;
+    }
+    
     /**
      * Consumes the {@code Intent} requested to stop a service by {@link #stopService(android.content.Intent)}
      * from the bottom of the stack of stop requests.

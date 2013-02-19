@@ -7,7 +7,6 @@ import android.widget.TextView;
 import com.xtremelabs.robolectric.R;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.WithTestDefaultsRunner;
-import com.xtremelabs.robolectric.util.I18nException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,28 +39,6 @@ public class ResourceLoaderTest {
         ResourceLoader resourceLoader = new ResourceLoader(DEFAULT_SDK_VERSION, R.class, resourceFile("res"), resourceFile("assets"));
         String stringValue = resourceLoader.getStringValue(R.string.copy);
         assertEquals("Local Copy", stringValue);
-    }
-
-    @Test(expected=I18nException.class)
-    public void shouldThrowExceptionOnI18nStrictModeInflateView() throws Exception {
-        ResourceLoader resourceLoader = new ResourceLoader(DEFAULT_SDK_VERSION, R.class, resourceFile("res"), resourceFile("layout"));
-        resourceLoader.setStrictI18n(true);
-        ViewGroup vg = new FrameLayout(Robolectric.application);
-    	resourceLoader.inflateView(Robolectric.application, R.layout.text_views, vg);
-    }
-    
-    @Test(expected=I18nException.class)
-    public void shouldThrowExceptionOnI18nStrictModeInflateMenu() throws Exception {
-        ResourceLoader resourceLoader = new ResourceLoader(DEFAULT_SDK_VERSION, R.class, resourceFile("res"), resourceFile("menu"));
-        resourceLoader.setStrictI18n(true);
-    	resourceLoader.inflateMenu(Robolectric.application, R.menu.test, null);
-    }
-    
-    @Test(expected=I18nException.class)
-    public void shouldThrowExceptionOnI18nStrictModeInflatePreferences() throws Exception {
-        ResourceLoader resourceLoader = new ResourceLoader(DEFAULT_SDK_VERSION, R.class, resourceFile("res"), resourceFile("xml"));
-        resourceLoader.setStrictI18n(true);
-    	resourceLoader.inflatePreferences(Robolectric.application, R.xml.preferences);
     }
 
     @Test

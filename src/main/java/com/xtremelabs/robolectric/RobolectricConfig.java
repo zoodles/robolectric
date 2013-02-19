@@ -31,7 +31,6 @@ public class RobolectricConfig {
     private boolean minSdkVersionSpecified = true;
     private int applicationFlags;
     private final List<ReceiverAndIntentFilter> receivers = new ArrayList<ReceiverAndIntentFilter>();
-    private boolean strictI18n = false;
     private String valuesResQualifiers="";
     private String oldValuesResQualifier="";
 
@@ -241,14 +240,6 @@ public class RobolectricConfig {
     public List<String> getReceiverIntentFilterActions(final int receiverIndex) {
         parseAndroidManifest();
         return receivers.get(receiverIndex).getIntentFilterActions();
-    }
-
-    public boolean getStrictI18n() {
-    	return strictI18n;
-    }
-    
-    public void setStrictI18n(boolean strict) {
-    	strictI18n = strict;
     }
 
     public void setValuesResQualifiers( String qualifiers ){

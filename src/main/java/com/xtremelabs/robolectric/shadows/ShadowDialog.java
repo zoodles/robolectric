@@ -81,7 +81,7 @@ public class ShadowDialog {
         this.title = context.getResources().getText(stringResourceId);
     }
 
-    @Implementation(i18nSafe = false)
+    @Implementation
     public void setTitle(CharSequence title) {
         this.title = title;
     }

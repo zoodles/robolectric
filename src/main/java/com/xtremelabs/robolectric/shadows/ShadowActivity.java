@@ -189,7 +189,7 @@ public class ShadowActivity extends ShadowContextWrapper {
     	return mDefaultKeyMode;
     }
 
-    @Implementation(i18nSafe = false)
+    @Implementation
     public void setTitle(CharSequence title) {
         this.title = title;
     }

@@ -4,7 +4,6 @@ import android.util.AttributeSet;
 import android.view.View;
 import com.xtremelabs.robolectric.res.AttrResourceLoader;
 import com.xtremelabs.robolectric.res.ResourceExtractor;
-import com.xtremelabs.robolectric.util.I18nException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,16 +14,6 @@ public class TestAttributeSet implements AttributeSet {
     private AttrResourceLoader attrResourceLoader;
     private Class<? extends View> viewClass;
     private boolean isSystem = false;
-
-    /**
-     * Names of attributes to be validated for i18n-safe values.
-     */
-    private static final String strictI18nAttrs[] = {
-            "android:text",
-            "android:title",
-            "android:titleCondensed",
-            "android:summary"
-    };
 
     public TestAttributeSet(Map<String, String> attributes, ResourceExtractor resourceExtractor,
                             AttrResourceLoader attrResourceLoader, Class<? extends View> viewClass, boolean isSystem) {
@@ -191,19 +180,6 @@ public class TestAttributeSet implements AttributeSet {
     @Override
     public int getStyleAttribute() {
         throw new UnsupportedOperationException();
-    }
-
-    public void validateStrictI18n() {
-        for (int i = 0; i < strictI18nAttrs.length; i++) {
-            String key = strictI18nAttrs[i];
-            if (attributes.containsKey(key)) {
-                String value = attributes.get(key);
-                if (!value.startsWith("@string/")) {
-                    throw new I18nException("View class: " + (viewClass != null ? viewClass.getName() : "") +
-                            " has attribute: " + key + " with hardcoded value: \"" + value + "\" and is not i18n-safe.");
-                }
-            }
-        }
     }
 
     private String getAttributeValueInMap(String namespace, String attribute) {

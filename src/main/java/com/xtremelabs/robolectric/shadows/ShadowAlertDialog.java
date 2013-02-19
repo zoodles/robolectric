@@ -294,7 +294,7 @@ public class ShadowAlertDialog extends ShadowDialog {
             return realBuilder;
         }
 
-        @Implementation(i18nSafe=false)
+        @Implementation
         public AlertDialog.Builder setItems(CharSequence[] items, final DialogInterface.OnClickListener listener) {
             this.isMultiItem = false;
 
@@ -303,7 +303,7 @@ public class ShadowAlertDialog extends ShadowDialog {
             return realBuilder;
         }
 
-        @Implementation(i18nSafe=false)
+        @Implementation
         public AlertDialog.Builder setSingleChoiceItems(CharSequence[] items, int checkedItem, final DialogInterface.OnClickListener listener) {
             this.isSingleItem = true;
             this.checkedItem = checkedItem;
@@ -312,7 +312,7 @@ public class ShadowAlertDialog extends ShadowDialog {
             return realBuilder;
         }
 
-        @Implementation(i18nSafe=false)
+        @Implementation
         public AlertDialog.Builder setSingleChoiceItems(ListAdapter adapter, int checkedItem, final DialogInterface.OnClickListener listener) {
             this.isSingleItem = true;
             this.checkedItem = checkedItem;
@@ -322,7 +322,7 @@ public class ShadowAlertDialog extends ShadowDialog {
             return realBuilder;
         }
 
-        @Implementation(i18nSafe=false)
+        @Implementation
         public AlertDialog.Builder setMultiChoiceItems(CharSequence[] items, boolean[] checkedItems, final DialogInterface.OnMultiChoiceClickListener listener) {
             this.isMultiItem = true;
 
@@ -339,7 +339,7 @@ public class ShadowAlertDialog extends ShadowDialog {
             return realBuilder;
         }
 
-        @Implementation(i18nSafe=false)
+        @Implementation
         public AlertDialog.Builder setTitle(CharSequence title) {
             this.title = title.toString();
             return realBuilder;
@@ -357,7 +357,7 @@ public class ShadowAlertDialog extends ShadowDialog {
             return setTitle(context.getResources().getString(titleId));
         }
 
-        @Implementation(i18nSafe=false)
+        @Implementation
         public AlertDialog.Builder setMessage(CharSequence message) {
             this.message = message.toString();
             return realBuilder;
@@ -387,7 +387,7 @@ public class ShadowAlertDialog extends ShadowDialog {
         	return realBuilder;
         }
         
-        @Implementation(i18nSafe=false)
+        @Implementation
         public AlertDialog.Builder setPositiveButton(CharSequence text, final DialogInterface.OnClickListener listener) {
             this.positiveText = text;
             this.positiveListener = listener;
@@ -399,7 +399,7 @@ public class ShadowAlertDialog extends ShadowDialog {
             return setPositiveButton(context.getResources().getText(positiveTextId), listener);
         }
 
-        @Implementation(i18nSafe=false)
+        @Implementation
         public AlertDialog.Builder setNegativeButton(CharSequence text, final DialogInterface.OnClickListener listener) {
             this.negativeText = text;
             this.negativeListener = listener;
@@ -411,7 +411,7 @@ public class ShadowAlertDialog extends ShadowDialog {
             return setNegativeButton(context.getResources().getString(negativeTextId), listener);
         }
 
-        @Implementation(i18nSafe=false)
+        @Implementation
         public AlertDialog.Builder setNeutralButton(CharSequence text, final DialogInterface.OnClickListener listener) {
             this.neutralText = text;
             this.neutralListener = listener;

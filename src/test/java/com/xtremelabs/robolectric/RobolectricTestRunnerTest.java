@@ -36,6 +36,15 @@ public class RobolectricTestRunnerTest {
     @Values( qualifiers="fr")
     public void internalBeforeTest_testValuesResQualifiers() {
     	assertEquals( RunnerForTesting.instance.robolectricConfig.getValuesResQualifiers(), "fr" );
+    	ResourceLoader rl = shadowOf(Robolectric.application).getResourceLoader();
+    	assertEquals( "Bonjour", rl.getStringValue(R.string.hello ));
+    }
+    
+    @Test
+    public void internalBeforeTest_testValuesResQualifiersNotSet() {
+    	assertEquals( RunnerForTesting.instance.robolectricConfig.getValuesResQualifiers(), "" );
+    	ResourceLoader rl = shadowOf(Robolectric.application).getResourceLoader();
+    	assertEquals( "Hello", rl.getStringValue(R.string.hello ));
     }
     
     public static class RunnerForTesting extends WithTestDefaultsRunner {

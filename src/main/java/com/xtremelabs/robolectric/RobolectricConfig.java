@@ -242,7 +242,8 @@ public class RobolectricConfig {
         return receivers.get(receiverIndex).getIntentFilterActions();
     }
 
-    public void setValuesResQualifiers( String qualifiers ){
+    public void setValuesResQualifiers( String qualifiers ) {
+    	// TODO
     	this.oldValuesResQualifier = this.valuesResQualifiers;
     	this.valuesResQualifiers = qualifiers;
     }
@@ -253,6 +254,12 @@ public class RobolectricConfig {
     
     public boolean isValuesResQualifiersChanged() {
     	return !valuesResQualifiers.equals( oldValuesResQualifier );
+    }
+    
+    public void revertValueResQualifiers() {
+    	String tmp = this.oldValuesResQualifier;
+    	this.oldValuesResQualifier = this.valuesResQualifiers;
+    	this.valuesResQualifiers = tmp;
     }
     
     private static String getTagAttributeText(final Document doc, final String tag, final String attribute) {

@@ -14,5 +14,7 @@ public interface RobolectricTestRunnerInterface {
 
     void setRobolectricConfig(RobolectricConfig config);
     
-    void setDatabaseMap(DatabaseMap databaseMap);    
+    void setDatabaseMap(DatabaseMap databaseMap);
+    
+    void reloadValuesResources();
 }

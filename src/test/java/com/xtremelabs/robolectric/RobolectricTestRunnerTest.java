@@ -33,12 +33,6 @@ public class RobolectricTestRunnerTest {
     }
     
     @Test
-    @Values( locale="fr")
-    public void internalBeforeTest_setLocale(){
-    	assertEquals( RunnerForTesting.instance.robolectricConfig.getValuesResQualifiers(), "fr" );
-    }
-    
-    @Test
     @Values( qualifiers="fr")
     public void internalBeforeTest_testValuesResQualifiers() {
     	assertEquals( RunnerForTesting.instance.robolectricConfig.getValuesResQualifiers(), "fr" );

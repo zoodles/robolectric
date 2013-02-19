@@ -48,6 +48,11 @@ public class MenuLoaderTest {
 	@After
 	public void tearDown() throws Exception {
 	}
+	
+	@Test
+	public void testSomething() throws Exception {
+		;
+	}
 
 	public class TestMenu implements Menu {
 		@Override

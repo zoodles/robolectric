@@ -45,10 +45,6 @@ public class ShadowWrangler implements ClassHandler {
     }
 
     @Override
-    public void configure(RobolectricConfig robolectricConfig) {
-    }
-
-    @Override
     public void instrument(CtClass ctClass) {
         try {
             CtClass objectClass = ctClass.getClassPool().get(Object.class.getName());

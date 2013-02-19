@@ -271,7 +271,6 @@ public class RobolectricTestRunner extends BlockJUnit4ClassRunner implements Rob
         lookForLocaleAnnotation( method.getMethod(), robolectricConfig );
         
     	if (classHandler != null) {
-            classHandler.configure(robolectricConfig);
             classHandler.beforeTest();
         }
         delegate.internalBeforeTest(method.getMethod());
@@ -283,6 +282,10 @@ public class RobolectricTestRunner extends BlockJUnit4ClassRunner implements Rob
 
             	// todo: this try/finally probably isn't right -- should mimic RunAfters? [xw]
                 try {
+                	if (robolectricConfig.isValuesResQualifiersChanged()){
+                        delegate.reloadValuesResources();
+                    }
+                	
                 	if (withConstantAnnos.isEmpty()) {
                 		statement.evaluate();
                 	}
@@ -297,6 +300,10 @@ public class RobolectricTestRunner extends BlockJUnit4ClassRunner implements Rob
                     delegate.internalAfterTest(method.getMethod());
                     if (classHandler != null) {
                         classHandler.afterTest();
+                    }
+                	if (robolectricConfig.isValuesResQualifiersChanged()){
+                		robolectricConfig.revertValueResQualifiers();
+                		delegate.reloadValuesResources();
                     }
                 }
             }
@@ -318,6 +325,12 @@ public class RobolectricTestRunner extends BlockJUnit4ClassRunner implements Rob
 
     @Override public void setRobolectricConfig(final RobolectricConfig robolectricConfig) {
         this.robolectricConfig = robolectricConfig;
+    }
+    
+    @Override
+    public void reloadValuesResources() {
+    	ResourceLoader resourceLoader = resourceLoaderForRootAndDirectory.get(robolectricConfig);
+        resourceLoader.reloadValuesResouces(robolectricConfig.getValuesResQualifiers());
     }
 
     /**
@@ -386,9 +399,7 @@ public class RobolectricTestRunner extends BlockJUnit4ClassRunner implements Rob
 
 	private void lookForLocaleAnnotation( Method method, RobolectricConfig robolectricConfig ) {
 		String qualifiers = "";
-		// TODO: there are maybe better implementation for getAnnotation
-		// Have tried to use several other simple ways, but failed.
-		
+
 		Annotation[] annos = method.getDeclaredAnnotations();
 		for( Annotation anno: annos ){
 			
@@ -535,11 +546,6 @@ public class RobolectricTestRunner extends BlockJUnit4ClassRunner implements Rob
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        }
-        
-        // When locale has changed, reload values resource files.
-        else if(robolectricConfig.isValuesResQualifiersChanged()){
-        	resourceLoader.reloadValuesResouces( robolectricConfig.getValuesResQualifiers() );
         }
 
         return resourceLoader;

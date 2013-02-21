@@ -1,6 +1,8 @@
 package com.xtremelabs.robolectric.shadows;
 
 import android.widget.AbsListView;
+import android.widget.AbsListView.RecyclerListener;
+
 import com.xtremelabs.robolectric.internal.Implementation;
 import com.xtremelabs.robolectric.internal.Implements;
 
@@ -10,6 +12,7 @@ public class ShadowAbsListView extends ShadowAdapterView {
     private int smoothScrolledPosition;
     private int lastSmoothScrollByDistance;
     private int lastSmoothScrollByDuration;
+    private RecyclerListener recyclerListener;
 
     @Implementation
     public void setOnScrollListener(AbsListView.OnScrollListener l) {
@@ -27,6 +30,11 @@ public class ShadowAbsListView extends ShadowAdapterView {
         this.lastSmoothScrollByDuration = duration;
     }
 
+    @Implementation
+    public void setRecyclerListener( RecyclerListener listener ) {
+    	this.recyclerListener = listener;
+    }
+    
     /**
      * Robolectric accessor for the onScrollListener
      *
@@ -61,5 +69,9 @@ public class ShadowAbsListView extends ShadowAdapterView {
      */
     public int getLastSmoothScrollByDuration() {
         return lastSmoothScrollByDuration;
+    }
+    
+    public RecyclerListener getRecyclerListener () {
+    	return recyclerListener;
     }
 }

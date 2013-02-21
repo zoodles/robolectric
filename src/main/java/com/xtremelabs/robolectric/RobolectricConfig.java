@@ -31,7 +31,6 @@ public class RobolectricConfig {
     private boolean minSdkVersionSpecified = true;
     private int applicationFlags;
     private final List<ReceiverAndIntentFilter> receivers = new ArrayList<ReceiverAndIntentFilter>();
-    private boolean strictI18n = false;
     private String valuesResQualifiers="";
     private String oldValuesResQualifier="";
 
@@ -243,15 +242,8 @@ public class RobolectricConfig {
         return receivers.get(receiverIndex).getIntentFilterActions();
     }
 
-    public boolean getStrictI18n() {
-    	return strictI18n;
-    }
-    
-    public void setStrictI18n(boolean strict) {
-    	strictI18n = strict;
-    }
-
-    public void setValuesResQualifiers( String qualifiers ){
+    public void setValuesResQualifiers( String qualifiers ) {
+    	// TODO
     	this.oldValuesResQualifier = this.valuesResQualifiers;
     	this.valuesResQualifiers = qualifiers;
     }
@@ -262,6 +254,12 @@ public class RobolectricConfig {
     
     public boolean isValuesResQualifiersChanged() {
     	return !valuesResQualifiers.equals( oldValuesResQualifier );
+    }
+    
+    public void revertValueResQualifiers() {
+    	String tmp = this.oldValuesResQualifier;
+    	this.oldValuesResQualifier = this.valuesResQualifiers;
+    	this.valuesResQualifiers = tmp;
     }
     
     private static String getTagAttributeText(final Document doc, final String tag, final String attribute) {

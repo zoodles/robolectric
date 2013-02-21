@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 
 import com.xtremelabs.robolectric.tester.android.util.TestAttributeSet;
-import com.xtremelabs.robolectric.util.I18nException;
 
 public class MenuLoader extends XmlLoader {
     private Map<String, MenuNode> menuNodesByMenuName = new HashMap<String, MenuNode>();
@@ -119,8 +118,6 @@ public class MenuLoader extends XmlLoader {
                 }
             }
             menuNode.inflate(context, root);
-        } catch (I18nException e) {
-            throw e;
         } catch (Exception e) {
             throw new RuntimeException("error inflating " + key, e);
         }
@@ -155,9 +152,7 @@ public class MenuLoader extends XmlLoader {
             for (MenuNode child : source.children) {
                 String name = child.name;
                 TestAttributeSet attributes = child.attributes;
-                if (strictI18n) {
-                    attributes.validateStrictI18n();
-                }
+                
                 if (name.equals("item")) {
                     if (isSubMenuItem(child)) {
                         SubMenu sub = root.addSubMenu(groupId, attributes

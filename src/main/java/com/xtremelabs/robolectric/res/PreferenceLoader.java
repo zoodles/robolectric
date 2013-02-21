@@ -14,7 +14,6 @@ import org.w3c.dom.NodeList;
 
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.tester.android.util.TestAttributeSet;
-import com.xtremelabs.robolectric.util.I18nException;
 
 import android.content.Context;
 import android.preference.Preference;
@@ -73,8 +72,6 @@ public class PreferenceLoader extends XmlLoader {
         try {
         	PreferenceNode prefNode = prefNodesByResourceName.get(key);
         	return (PreferenceScreen) prefNode.inflate(context, null);
-        } catch (I18nException e) {
-        	throw e;
         } catch (Exception e) {
             throw new RuntimeException("error inflating " + key, e);
         }
@@ -126,9 +123,7 @@ public class PreferenceLoader extends XmlLoader {
            	
            	try {
                 TestAttributeSet attributeSet = new TestAttributeSet(attributes);
-                if (strictI18n) {
-                	attributeSet.validateStrictI18n();
-                }
+                
                 return ((Constructor<? extends Preference>) clazz.getConstructor(Context.class, AttributeSet.class)).newInstance(context, attributeSet);
             } catch (NoSuchMethodException e) {
 	            try {

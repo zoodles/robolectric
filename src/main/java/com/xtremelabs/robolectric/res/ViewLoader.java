@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 import com.xtremelabs.robolectric.tester.android.util.TestAttributeSet;
-import com.xtremelabs.robolectric.util.I18nException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -100,8 +99,6 @@ public class ViewLoader extends XmlLoader {
                 }
             }
             return viewNode.inflate(context, parent);
-        } catch (I18nException e) {
-            throw e;
         } catch (Exception e) {
             throw new RuntimeException("error inflating " + layoutName, e);
         }
@@ -185,9 +182,6 @@ public class ViewLoader extends XmlLoader {
 
         private FrameLayout constructFragment(Context context) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
             TestAttributeSet attributeSet = new TestAttributeSet(attributes, resourceExtractor, attrResourceLoader, View.class, isSystem);
-            if (strictI18n) {
-                attributeSet.validateStrictI18n();
-            }
 
             Class<? extends Fragment> clazz = loadFragmentClass(attributes.get("android:name"));
             Fragment fragment = ((Constructor<? extends Fragment>) clazz.getConstructor()).newInstance();
@@ -222,9 +216,6 @@ public class ViewLoader extends XmlLoader {
             Class<? extends View> clazz = pickViewClass();
             try {
                 TestAttributeSet attributeSet = new TestAttributeSet(attributes, resourceExtractor, attrResourceLoader, clazz, isSystem);
-                if (strictI18n) {
-                    attributeSet.validateStrictI18n();
-                }
                 return ((Constructor<? extends View>) clazz.getConstructor(Context.class, AttributeSet.class)).newInstance(context, attributeSet);
             } catch (NoSuchMethodException e) {
                 try {

@@ -21,7 +21,6 @@ import android.view.ViewGroup;
 
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.ShadowContextWrapper;
-import com.xtremelabs.robolectric.util.I18nException;
 import com.xtremelabs.robolectric.util.PropertiesHelper;
 
 public class ResourceLoader {
@@ -65,7 +64,6 @@ public class ResourceLoader {
 	private final IntegerResourceLoader integerResourceLoader;
 	private final BoolResourceLoader boolResourceLoader;
 	private boolean isInitialized = false;
-	private boolean strictI18n = false;
 	
 	private final Set<Integer> ninePatchDrawableIds = new HashSet<Integer>();
 
@@ -92,26 +90,6 @@ public class ResourceLoader {
 		this.resourceDir = resourceDir;
 	}
 
-	public void setStrictI18n( boolean strict ) {
-		this.strictI18n = strict;
-		if ( viewLoader != null ) {
-			viewLoader.setStrictI18n( strict );
-		}
-		if ( menuLoader != null ) {
-			menuLoader.setStrictI18n( strict );
-		}
-		if ( preferenceLoader != null ) {
-			preferenceLoader.setStrictI18n( strict );
-		}
-		if ( xmlFileLoader != null ) {
-			xmlFileLoader.setStrictI18n( strict );
-		}
-	}
-
-	public boolean getStrictI18n() {
-		return strictI18n;
-	}
-
 	private void init() {
 		if ( isInitialized ) {
 			return;
@@ -123,11 +101,6 @@ public class ResourceLoader {
 				menuLoader = new MenuLoader( resourceExtractor, attrResourceLoader );
 				preferenceLoader = new PreferenceLoader( resourceExtractor );
 				xmlFileLoader = new XmlFileLoader( resourceExtractor );
-
-				viewLoader.setStrictI18n( strictI18n );
-				menuLoader.setStrictI18n( strictI18n );
-				preferenceLoader.setStrictI18n( strictI18n );
-				xmlFileLoader.setStrictI18n( strictI18n );
 
 				File systemResourceDir = getSystemResourceDir( getPathToAndroidResources() );
 				File localValueResourceDir = getValueResourceDir( resourceDir, null, true );
@@ -152,8 +125,6 @@ public class ResourceLoader {
 				preferenceLoader = null;
 				xmlFileLoader = null;
 			}
-		} catch ( I18nException e ) {
-			throw e;
 		} catch ( Exception e ) {
 			throw new RuntimeException( e );
 		}

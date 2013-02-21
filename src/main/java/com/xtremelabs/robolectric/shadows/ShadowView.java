@@ -166,7 +166,7 @@ public class ShadowView {
         }
     }
 
-    @Implementation(i18nSafe = false)
+    @Implementation
     public void setContentDescription(CharSequence contentDescription) {
         this.contentDescription = contentDescription;
     }

@@ -28,7 +28,7 @@ public class ShadowEditText extends ShadowTextView {
     }
 
     @Override
-    @Implementation(i18nSafe = true)
+    @Implementation
     public void setText(CharSequence str) {
         if (!TextUtils.isEmpty(str) && str.length() > maxLength) {
             str = str.subSequence(0, maxLength);

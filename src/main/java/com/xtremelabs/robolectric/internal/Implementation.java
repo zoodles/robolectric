@@ -10,5 +10,4 @@ package com.xtremelabs.robolectric.internal;
 @java.lang.annotation.Retention(java.lang.annotation.RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target({java.lang.annotation.ElementType.METHOD})
 public @interface Implementation {
-	boolean i18nSafe() default true;
 }

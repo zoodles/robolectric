@@ -2,7 +2,6 @@ package com.xtremelabs.robolectric.bytecode;
 
 import com.xtremelabs.robolectric.RobolectricConfig;
 import com.xtremelabs.robolectric.internal.RealObject;
-import com.xtremelabs.robolectric.util.I18nException;
 import com.xtremelabs.robolectric.util.Join;
 import javassist.CannotCompileException;
 import javassist.CtClass;
@@ -28,7 +27,6 @@ public class ShadowWrangler implements ClassHandler {
     private static ShadowWrangler singleton;
 
     public boolean debug = false;
-    private boolean strictI18n = false;
 
     private final Map<Class, MetaShadow> metaShadowMap = new HashMap<Class, MetaShadow>();
     private Map<String, String> shadowClassMap = new HashMap<String, String>();
@@ -44,11 +42,6 @@ public class ShadowWrangler implements ClassHandler {
     }
 
     private ShadowWrangler() {
-    }
-
-    @Override
-    public void configure(RobolectricConfig robolectricConfig) {
-    	strictI18n = robolectricConfig.getStrictI18n();
     }
 
     @Override
@@ -89,10 +82,6 @@ public class ShadowWrangler implements ClassHandler {
         if (!invocationPlan.prepare()) {
             reportNoShadowMethodFound(clazz, methodName, paramTypes);
             return null;
-        }
-
-        if (strictI18n && !invocationPlan.isI18nSafe()) {
-        	throw new I18nException("Method " + methodName + " on class " + clazz.getName() + " is not i18n-safe.");
         }
 
         try {

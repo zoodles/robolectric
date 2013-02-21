@@ -25,7 +25,6 @@ import com.xtremelabs.robolectric.R;
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.WithTestDefaultsRunner;
 import com.xtremelabs.robolectric.tester.android.view.TestMenuItem;
-import com.xtremelabs.robolectric.util.I18nException;
 
 @RunWith(WithTestDefaultsRunner.class)
 public class MenuLoaderTest {
@@ -49,14 +48,12 @@ public class MenuLoaderTest {
 	@After
 	public void tearDown() throws Exception {
 	}
-
-	@Test(expected=I18nException.class)
-	public void shouldThrowI18nExceptionOnMenuWithBareStrings() throws Exception {
-		Menu testMenu = new TestMenu();
-        menuLoader.setStrictI18n(true);
-		menuLoader.inflateMenu(Robolectric.application, R.menu.test, testMenu);
-	}
 	
+	@Test
+	public void testSomething() throws Exception {
+		;
+	}
+
 	public class TestMenu implements Menu {
 		@Override
 		public MenuItem add(CharSequence title) {

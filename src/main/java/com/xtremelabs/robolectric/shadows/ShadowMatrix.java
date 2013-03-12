@@ -14,6 +14,8 @@ public class ShadowMatrix {
 
     private float scaleY = 1;
     private float transY;
+    private float preTransX = 1f;
+    private float preTransY = 1f;
 
     // scaleX=0, skewX=1,  transX=2
     // skewY=3,  scaleY=4, transY=5
@@ -44,6 +46,20 @@ public class ShadowMatrix {
     }
 
     @Implementation
+    public void preTranslate( float dx, float dy ){
+    	preTransX = dx;
+    	preTransY = dy;
+    }
+    
+    public float getPreTransX() {
+    	return preTransX;
+    }
+    
+    public float getPreTransY() {
+    	return preTransY;
+    }
+    
+    @Implementation
     public void postTranslate(float dx, float dy) {
         transX += dx;
         transY += dy;
@@ -71,4 +87,5 @@ public class ShadowMatrix {
     public float getScaleY() {
         return scaleY;
     }
+    
 }

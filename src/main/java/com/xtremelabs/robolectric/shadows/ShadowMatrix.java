@@ -73,6 +73,20 @@ public class ShadowMatrix {
         return transY;
     }
 
+    @Implementation 
+    public boolean preScale (float sx, float sy){
+    	scaleX *= sx;
+    	scaleY *= sy;
+    	return true;
+    }
+    
+    @Implementation
+    public boolean preScale (float sx, float sy, float px, float py){
+    	scaleX *= sx;
+    	scaleY *= sy;
+    	return true;
+    }
+    
     @Implementation
     public boolean postScale(float sx, float sy, float px, float py) {
         scaleX *= sx;

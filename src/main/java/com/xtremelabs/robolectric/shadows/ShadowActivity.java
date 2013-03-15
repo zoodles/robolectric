@@ -44,6 +44,7 @@ public class ShadowActivity extends ShadowContextWrapper {
     private Activity parent;
     private boolean finishWasCalled;
     private TestWindow window;
+    private boolean finishAffinityCalled = false;
 
     private List<IntentForResult> startedActivitiesForResults = new ArrayList<IntentForResult>();
 
@@ -288,16 +289,26 @@ public class ShadowActivity extends ShadowContextWrapper {
         finishWasCalled = true;
     }
 
+    @Implementation
+    public void finishAffinity() {
+    	finishAffinityCalled = true;
+    }
+    
     public void resetIsFinishing() {
         finishWasCalled = false;
     }
 
+    public boolean isFinishAffinityCalled() {
+    	return finishAffinityCalled;
+    }
+    
     /**
      * @return whether {@link #finish()} was called
      */
     @Implementation
     public boolean isFinishing() {
-        return finishWasCalled;
+        return finishWasCalled || finishAffinityCalled
+        		;
     }
 
     /**

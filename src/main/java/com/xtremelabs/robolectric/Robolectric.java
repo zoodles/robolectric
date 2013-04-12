@@ -362,6 +362,7 @@ public class Robolectric {
                 ShadowTypedArray.class,
                 ShadowTypedValue.class,
                 ShadowTypeface.class,
+                ShadowUiModeManager.class,
                 ShadowUriMatcher.class,
                 ShadowURLSpan.class,
                 ShadowValueAnimator.class,
@@ -1070,6 +1071,10 @@ public class Robolectric {
         return (ShadowTypeface) shadowOf_(instance);
     }
 
+    public static ShadowUiModeManager shadowOf( UiModeManager instance ){
+    	return (ShadowUiModeManager) shadowOf_(instance);
+    }
+    
     public static ShadowUriMatcher shadowOf(UriMatcher instance) {
         return (ShadowUriMatcher) shadowOf_(instance);
     }

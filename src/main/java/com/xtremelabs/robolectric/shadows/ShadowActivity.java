@@ -1,5 +1,6 @@
 package com.xtremelabs.robolectric.shadows;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Dialog;
@@ -62,6 +63,8 @@ public class ShadowActivity extends ShadowContextWrapper {
 
     private int mDefaultKeyMode = Activity.DEFAULT_KEYS_DISABLE;
     private SpannableStringBuilder mDefaultKeySsb = null;
+
+    private ActionBar mActionBar;
 
     public void callOnCreate(Bundle bundle) {
         invokeReflectively("onCreate", Bundle.class, bundle);
@@ -664,4 +667,18 @@ public class ShadowActivity extends ShadowContextWrapper {
             }
         }
     }
+    
+    /**
+     * Non-Android accessor, allows injecting a custom Action Bar.
+     * 
+     * @param ab
+     */
+	public void setActionBar(ActionBar ab) {
+    	mActionBar = ab;
+	}
+
+    @Implementation
+	public ActionBar getActionBar() {
+    	return mActionBar;
+	}
 }

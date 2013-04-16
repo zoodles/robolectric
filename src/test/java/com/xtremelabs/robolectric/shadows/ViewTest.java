@@ -374,6 +374,23 @@ public class ViewTest {
     }
 
     @Test
+    public void test_resolveSize() {
+    	final int size = 100;
+    	final int specSize = 80;
+    	int measureSpec = MeasureSpec.makeMeasureSpec( specSize, MeasureSpec.UNSPECIFIED );
+    	int result = View.resolveSize( size, measureSpec );
+    	assertThat( result, equalTo( size ) );
+    	
+    	measureSpec = MeasureSpec.makeMeasureSpec( specSize, MeasureSpec.AT_MOST );
+    	result = View.resolveSize( size, measureSpec );
+    	assertThat( result, equalTo( specSize ) );
+    	
+    	measureSpec = MeasureSpec.makeMeasureSpec( specSize, MeasureSpec.EXACTLY );
+    	result = View.resolveSize( size, measureSpec );
+    	assertThat( result, equalTo( specSize ) );
+    }
+    
+    @Test
     public void shouldGetAndSetTranslations() throws Exception {
         view = new TestView(new Activity());
         view.setTranslationX(8.9f);

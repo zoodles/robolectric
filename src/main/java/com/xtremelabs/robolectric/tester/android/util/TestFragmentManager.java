@@ -64,16 +64,25 @@ public class TestFragmentManager extends FragmentManager {
     
     public void addToBackStack( String name ) {
     	backStack.addLast(name);
+    	invokeBackStackListener();
+    }
+
+    private void invokeBackStackListener() {
+    	if ( backStackListener != null ) {
+    		backStackListener.onBackStackChanged();
+    	}
     }
 
     @Override
     public void popBackStack() {
     	backStack.removeLast();
+    	invokeBackStackListener();
     }
 
     @Override
     public boolean popBackStackImmediate() {
     	backStack.removeLast();
+    	invokeBackStackListener();
     	return false;
     }
 
@@ -87,11 +96,11 @@ public class TestFragmentManager extends FragmentManager {
     	if ( flags == POP_BACK_STACK_INCLUSIVE && !backStack.isEmpty() && current.equals(name) ) {
     		backStack.removeLast();
     	}
-    	if ( backStack.size() != size && backStackListener != null ) {
-    		backStackListener.onBackStackChanged();
+    	if ( backStack.size() != size ) {
+    		invokeBackStackListener();
     	}
     }
-
+    
     @Override
     public boolean popBackStackImmediate(String name, int flags) {
     	int size = backStack.size();
@@ -218,12 +227,16 @@ public class TestFragmentManager extends FragmentManager {
         if (t.isStarting()) {
             addFragment(t.getContainerViewId(), t.getTag(), t.getFragment(), t.isReplacing());
             startFragment(t.getFragment());
+            if (t.isAddedToBackStack()) {
+            	addToBackStack(t.getBackStackName());
+            }
         }
         if (t.isRemoving()) {
             Fragment fragment = t.getFragmentToRemove();
             if (fragment instanceof DialogFragment) {
                 ((DialogFragment)fragment).dismiss();
             }
+            // TODO what to do about the back stack?
         }
         if (t.isAttaching()) {
             shadowOf(t.getFragmentToAttach()).setAttached(true);

@@ -436,6 +436,29 @@ public class ShadowView {
     }
 
     @Implementation
+    public static int resolveSize (int size, int measureSpec) {
+    	int result = size;
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize =  MeasureSpec.getSize(measureSpec);
+        switch (specMode) {
+        case MeasureSpec.UNSPECIFIED:
+            result = size;
+            break;
+        case MeasureSpec.AT_MOST:
+            if (specSize < size) {
+                result = specSize;
+            } else {
+                result = size;
+            }
+            break;
+        case MeasureSpec.EXACTLY:
+            result = specSize;
+            break;
+        }
+        return result;
+    }
+    
+    @Implementation
     public final void layout(int l, int t, int r, int b) {
         left = l;
         top = t;

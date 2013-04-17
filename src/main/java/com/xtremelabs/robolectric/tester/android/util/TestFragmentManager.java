@@ -61,6 +61,10 @@ public class TestFragmentManager extends FragmentManager {
     public Fragment findFragmentByTag(String tag) {
         return fragmentsByTag.get(tag);
     }
+    
+    public void addToBackStack( String name ) {
+    	backStack.addLast(name);
+    }
 
     @Override
     public void popBackStack() {

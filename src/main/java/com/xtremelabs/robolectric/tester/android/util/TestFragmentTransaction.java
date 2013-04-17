@@ -118,6 +118,7 @@ public class TestFragmentTransaction extends FragmentTransaction {
     public FragmentTransaction addToBackStack(String name) {
         backStackName = name;
         addedToBackStack = true;
+        fragmentManager.addToBackStack( name );
         return this;
     }
 

@@ -13,10 +13,7 @@ import com.xtremelabs.robolectric.shadows.ShadowFragmentActivity;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.xtremelabs.robolectric.Robolectric.shadowOf;
 
@@ -26,6 +23,9 @@ public class TestFragmentManager extends FragmentManager {
     private FragmentActivity activity;
     private List<TestFragmentTransaction> transactions = new ArrayList<TestFragmentTransaction>();
     private List<Runnable> transactionsToRunLater = new ArrayList<Runnable>();
+    
+    private LinkedList<String> backStack = new LinkedList<String>();
+    private OnBackStackChangedListener backStackListener;
 
     public TestFragmentManager(FragmentActivity activity) {
         this.activity = activity;
@@ -64,47 +64,69 @@ public class TestFragmentManager extends FragmentManager {
 
     @Override
     public void popBackStack() {
+    	backStack.removeLast();
     }
 
     @Override
     public boolean popBackStackImmediate() {
-        return false;
+    	backStack.removeLast();
+    	return false;
     }
 
     @Override
     public void popBackStack(String name, int flags) {
+    	int size = backStack.size();
+    	String current = backStack.getLast();
+    	while( current != null && !current.equals(name) && !backStack.isEmpty() ) {
+    		current = backStack.removeLast();
+    	}
+    	if ( flags == POP_BACK_STACK_INCLUSIVE && !backStack.isEmpty() && current.equals(name) ) {
+    		backStack.removeLast();
+    	}
+    	if ( backStack.size() != size && backStackListener != null ) {
+    		backStackListener.onBackStackChanged();
+    	}
     }
 
     @Override
     public boolean popBackStackImmediate(String name, int flags) {
-        return false;
+    	int size = backStack.size();
+    	popBackStack(name, flags);
+        return size != backStack.size();
     }
 
     @Override
     public void popBackStack(int id, int flags) {
+    	// just toss them all
+    	popBackStack(null, flags);
     }
 
     @Override
     public boolean popBackStackImmediate(int id, int flags) {
-        return false;
+    	int size = backStack.size();
+    	popBackStack(null, flags);
+        return size != backStack.size();
     }
 
     @Override
     public int getBackStackEntryCount() {
-        return 0;
+        return backStack.size();
     }
 
     @Override
     public BackStackEntry getBackStackEntryAt(int index) {
-        return null;
+    	String name = backStack.get(index);
+        return new TestBackStackEntry( name );
     }
 
     @Override
     public void addOnBackStackChangedListener(OnBackStackChangedListener listener) {
+    	backStackListener = listener;
     }
 
     @Override
     public void removeOnBackStackChangedListener(OnBackStackChangedListener listener) {
+    	backStackListener = null;
     }
 
     @Override

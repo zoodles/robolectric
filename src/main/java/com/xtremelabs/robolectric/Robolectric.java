@@ -251,6 +251,7 @@ public class Robolectric {
                 ShadowLinearLayout.class,
                 ShadowLinkMovementMethod.class,
                 ShadowListActivity.class,
+                ShadowListFragment.class,
                 ShadowListPreference.class,
                 ShadowListView.class,
                 ShadowLocalBroadcastManager.class,
@@ -786,6 +787,10 @@ public class Robolectric {
         return (ShadowListActivity) shadowOf_(instance);
     }
 
+    public static ShadowListFragment shadowOf(ListFragment instance) {
+        return (ShadowListFragment) shadowOf_(instance);
+    }
+    
     public static ShadowListPreference shadowOf(ListPreference instance) {
         return (ShadowListPreference) shadowOf_(instance);
     }

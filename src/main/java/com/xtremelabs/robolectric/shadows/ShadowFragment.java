@@ -53,6 +53,11 @@ public class ShadowFragment {
     final public FragmentManager getFragmentManager() {
         return activity.getSupportFragmentManager();
     }
+    
+    @Implementation
+    public final FragmentManager getChildFragmentManager() {
+    	return getFragmentManager();
+    }
 
     @Implementation
     public String getTag() {

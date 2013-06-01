@@ -167,7 +167,7 @@ public class TestFragmentManager extends FragmentManager {
     @Override
     public void dump(String prefix, FileDescriptor fd, PrintWriter writer, String[] args) {
     }
-
+    
     public void addDialogFragment(String tag, DialogFragment fragment) {
         fragmentsByTag.put(tag, fragment);
     }

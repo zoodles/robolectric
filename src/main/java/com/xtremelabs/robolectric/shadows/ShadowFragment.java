@@ -20,6 +20,7 @@ public class ShadowFragment {
     private boolean shouldReplace;
     private Bundle arguments;
     private boolean attached;
+    private boolean hidden;
 
     public void setView(View view) {
         this.view = view;
@@ -124,5 +125,15 @@ public class ShadowFragment {
 
     public boolean isAttached() {
         return attached;
+    }
+    
+    @Implementation
+    public void onHiddenChanged( boolean isHidden ) {
+    	hidden = isHidden;
+    }
+    
+    @Implementation
+    public boolean isHidden() {
+    	return hidden;
     }
 }

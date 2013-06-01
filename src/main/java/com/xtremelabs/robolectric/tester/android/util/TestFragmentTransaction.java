@@ -68,6 +68,7 @@ public class TestFragmentTransaction extends FragmentTransaction {
 
     @Override
     public FragmentTransaction hide(Fragment fragment) {
+    	fragment.onHiddenChanged(true);
         return null;
     }
 

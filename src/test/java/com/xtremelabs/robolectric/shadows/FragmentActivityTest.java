@@ -112,9 +112,9 @@ public class FragmentActivityTest {
         activity = new TestFragmentActivity();
         activity.onCreate(bundle);
         TestFragmentManager fragmentManager = (TestFragmentManager) activity.getSupportFragmentManager();
-        assertEquals(2, fragmentManager.getFragments().size());
+        assertEquals(2, fragmentManager.getFragmentFromMap().size());
 
-        TestFragment restoredFrag = (TestFragment) fragmentManager.getFragments().get(containerId);
+        TestFragment restoredFrag = (TestFragment) fragmentManager.getFragmentFromMap().get(containerId);
         assertEquals(restoredFrag.getId(), dynamicFrag.getId());
         assertEquals(restoredFrag.getTag(), dynamicFrag.getTag());
         assertEquals(bundle, shadowOf(restoredFrag).getSavedInstanceState());
@@ -135,8 +135,8 @@ public class FragmentActivityTest {
         activity.onCreate(bundle);
         shadowOf(activity).onStart();
         TestFragmentManager fragmentManager = (TestFragmentManager) activity.getSupportFragmentManager();
-        assertEquals(2, fragmentManager.getFragments().size());
-        TestFragment restoredFrag = (TestFragment) fragmentManager.getFragments().get(containerId);
+        assertEquals(2, fragmentManager.getFragmentFromMap().size());
+        TestFragment restoredFrag = (TestFragment) fragmentManager.getFragmentFromMap().get(containerId);
 
         assertEquals(restoredFrag.onCreateViewInflater, activity.getLayoutInflater());
         assertNotNull(restoredFrag.getView());

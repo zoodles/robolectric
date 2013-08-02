@@ -53,14 +53,14 @@ public class ShadowFragmentActivity extends ShadowActivity {
 
     @Implementation
     public void onStart() {
-        for (Fragment fragment : fragmentManager.getFragments().values()) {
+        for (Fragment fragment : fragmentManager.getFragmentFromMap().values()) {
             fragmentManager.startFragment(fragment);
         }
     }
 
     @Implementation
     public void onPause() {
-        for(Fragment fragment : fragmentManager.getFragments().values()) {
+        for(Fragment fragment : fragmentManager.getFragmentFromMap().values()) {
             fragment.onPause();
         }
     }
@@ -76,7 +76,7 @@ public class ShadowFragmentActivity extends ShadowActivity {
         // terrible looking hack.  I am very sorry.
         List<SerializedFragmentState> fragmentStates = new ArrayList<SerializedFragmentState>();
 
-        for (Map.Entry<Integer, Fragment> entry : ((TestFragmentManager) fragmentManager).getFragments().entrySet()) {
+        for (Map.Entry<Integer, Fragment> entry : ((TestFragmentManager) fragmentManager).getFragmentFromMap().entrySet()) {
             Fragment fragment = entry.getValue();
             fragment.onSaveInstanceState(outState);
             fragmentStates.add(new SerializedFragmentState(entry.getKey(), fragment));

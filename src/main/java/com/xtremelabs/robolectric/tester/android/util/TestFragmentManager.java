@@ -1,21 +1,30 @@
 package com.xtremelabs.robolectric.tester.android.util;
 
+import static com.xtremelabs.robolectric.Robolectric.shadowOf;
+
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.app.*;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.xtremelabs.robolectric.Robolectric;
 import com.xtremelabs.robolectric.shadows.SerializedFragmentState;
 import com.xtremelabs.robolectric.shadows.ShadowFragment;
 import com.xtremelabs.robolectric.shadows.ShadowFragmentActivity;
-
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
-import java.util.*;
-
-import static com.xtremelabs.robolectric.Robolectric.shadowOf;
 
 public class TestFragmentManager extends FragmentManager {
     private Map<Integer, Fragment> fragmentsById = new HashMap<Integer, Fragment>();
@@ -214,12 +223,16 @@ public class TestFragmentManager extends FragmentManager {
         fragment.onStart();
     }
 
-    public HashMap<Integer, Fragment> getFragments() {
+    public HashMap<Integer, Fragment> getFragmentFromMap() {
         return new HashMap<Integer, Fragment>(fragmentsById);
     }
 
     public List<TestFragmentTransaction> getCommittedTransactions() {
         return transactions;
+    }
+    
+    public List<Fragment> getFragments() {
+    	return new ArrayList<Fragment>(fragmentsById.values());
     }
 
     public void commitTransaction(TestFragmentTransaction t) {
